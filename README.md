@@ -44,15 +44,28 @@ $env:DB_PASSWORD = "<your-local-password>"
 The environment variables are read by `application.properties`. Do not replace
 them with real credentials in that file. MySQL must be running. The
 `createDatabaseIfNotExist=true` JDBC option creates the database when needed,
-and Hibernate's `update` mode creates or updates tables for JPA entities.
+and Hibernate's `update` mode creates or updates tables for JPA entities
+without using a drop-and-recreate mode. Back up the database before applying
+schema changes to a database containing valuable data.
+
+The current persistence model contains categories, transactions, and monthly
+category budgets. Transaction and budget amounts use `DECIMAL(19,2)`. A
+category cannot be deleted while referenced by a transaction or budget, and a
+category can have at most one budget per month. Database foreign keys enforce
+these references; finance records are not cascade-deleted. The project is a
+single-user MVP and does not currently persist users, accounts, or savings
+goals.
 
 ## Build and test
 
 From the project root:
 
 ```powershell
-mvn clean test
+mvn clean verify
 ```
+
+Automated JPA schema tests use an isolated in-memory H2 database; they do not
+connect to or modify the configured MySQL database.
 
 ## Run
 
