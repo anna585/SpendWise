@@ -19,13 +19,16 @@ mvn -version
 
 ## MySQL setup
 
-Create a local database and a dedicated MySQL account. Replace the placeholders
-with values chosen for your machine; do not put real passwords in source files
+The application connects to the MySQL database named `spendwise`. If it does
+not exist, the JDBC connection creates it; if it already exists, the
+application reuses it. The MySQL account must have permission to create the
+database on first startup. To use a dedicated account, create it in MySQL and
+grant it the required permissions. Do not put real passwords in source files
 or commit them:
 
 ```sql
-CREATE DATABASE spendwise;
 CREATE USER 'spendwise_user'@'localhost' IDENTIFIED BY '<choose-a-local-password>';
+GRANT CREATE ON *.* TO 'spendwise_user'@'localhost';
 GRANT ALL PRIVILEGES ON spendwise.* TO 'spendwise_user'@'localhost';
 ```
 
@@ -33,15 +36,15 @@ Configure the connection in the PowerShell window where you will run the app.
 Set the password to the local MySQL account password you chose:
 
 ```powershell
-$env:DB_URL = "jdbc:mysql://localhost:3306/spendwise"
+$env:DB_URL = "jdbc:mysql://localhost:3306/spendwise?createDatabaseIfNotExist=true"
 $env:DB_USERNAME = "spendwise_user"
 $env:DB_PASSWORD = "<your-local-password>"
 ```
 
 The environment variables are read by `application.properties`. Do not replace
-them with real credentials in that file. The application uses Hibernate's
-`update` mode for this local MVP, so MySQL must be running and the database must
-already exist.
+them with real credentials in that file. MySQL must be running. The
+`createDatabaseIfNotExist=true` JDBC option creates the database when needed,
+and Hibernate's `update` mode creates or updates tables for JPA entities.
 
 ## Build and test
 
