@@ -1,5 +1,7 @@
 package com.example.spendwise.controller;
 
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -190,6 +192,27 @@ class TransactionControllerTest {
     }
 
     @Test
+    void preservesEditStateAndSubmittedValuesWhenUpdateValidationFails() throws Exception {
+        when(categoryService.findAll()).thenReturn(List.of(category()));
+
+        mockMvc.perform(post("/transactions/8")
+                        .param("type", "EXPENSE")
+                        .param("amount", "-4.00")
+                        .param("transactionDate", "2026-10-16")
+                        .param("description", "Updated lunch")
+                        .param("categoryId", "3"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("transactions/form"))
+                .andExpect(model().attribute("transactionId", 8L))
+                .andExpect(model().attributeExists("formAction", "pageTitle", "categories"))
+                .andExpect(model().attributeHasFieldErrors("transactionForm", "amount"))
+                .andExpect(model().attribute(
+                        "transactionForm",
+                        hasProperty("description", is("Updated lunch"))
+                ));
+    }
+
+    @Test
     void confirmsDeleteWithASeparatePage() throws Exception {
         when(transactionService.findById(8L)).thenReturn(transaction());
 
@@ -216,6 +239,18 @@ class TransactionControllerTest {
                 .thenThrow(new TransactionNotFoundException(404L));
 
         mockMvc.perform(get("/transactions/404/edit"))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("transactions/not-found"))
+                .andExpect(model().attributeExists("errorMessage"));
+    }
+
+    @Test
+    void returnsNotFoundPageWhenDeletingMissingTransaction() throws Exception {
+        doThrow(new TransactionNotFoundException(404L))
+                .when(transactionService)
+                .delete(404L);
+
+        mockMvc.perform(post("/transactions/404/delete"))
                 .andExpect(status().isNotFound())
                 .andExpect(view().name("transactions/not-found"))
                 .andExpect(model().attributeExists("errorMessage"));

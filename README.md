@@ -1,40 +1,46 @@
 # SpendWise
 
-SpendWise is a small, server-rendered personal finance tracker. This initial
-project foundation contains a Spring Boot application and a placeholder home
-page; finance features will be added in later steps.
+SpendWise is a single-user, server-rendered personal finance tracker built
+with Spring Boot, Thymeleaf, Spring Data JPA, Bean Validation, and MySQL. The
+current web application lets you create and list income/expense categories
+and create, list, edit, and delete income/expense transactions.
+
+Transactions have a positive decimal amount, date, description, type, and one
+category of the same type. Amounts are stored as `DECIMAL(19,2)`. Transaction
+deletion requires a confirmation page and a POST submission. Category
+management currently supports listing and creation only; categories referenced
+by transactions or budgets cannot be deleted by the database.
+
+The persistence model also includes monthly category budgets, with one budget
+per category per month. Budget management, monthly summaries, and spending
+reports are not currently available in the web UI.
 
 ## Prerequisites
 
-- Java Development Kit (JDK) 25 or later
+- JDK 25 or later
 - Apache Maven 3.9 or later
 - MySQL Server 8.0 or later
 
-Check the installed Java and Maven versions:
+Check the installed tools:
 
 ```powershell
 java -version
 mvn -version
 ```
 
-## MySQL setup
+## Configure MySQL
 
-The application connects to the MySQL database named `spendwise`. If it does
-not exist, the JDBC connection creates it; if it already exists, the
-application reuses it. The MySQL account must have permission to create the
-database on first startup. To use a dedicated account, create it in MySQL and
-grant it the required permissions. Do not put real passwords in source files
-or commit them:
+Create the `spendwise` database using an administrator account, then create a
+dedicated application user with access limited to that database:
 
 ```sql
+CREATE DATABASE spendwise;
 CREATE USER 'spendwise_user'@'localhost' IDENTIFIED BY '<choose-a-local-password>';
-GRANT CREATE ON *.* TO 'spendwise_user'@'localhost';
 GRANT ALL PRIVILEGES ON spendwise.* TO 'spendwise_user'@'localhost';
 ```
 
-Set `DB_USERNAME` and `DB_PASSWORD` in the project-root `.env` file. It is
-excluded from Git, and Spring Boot loads it when the app starts. Replace the
-example values with the credentials for your local MySQL account:
+Set the following values in the project-root `.env` file. Replace the example
+username and password with the local MySQL account credentials:
 
 ```dotenv
 DB_URL=jdbc:mysql://localhost:3306/spendwise?createDatabaseIfNotExist=true
@@ -42,41 +48,43 @@ DB_USERNAME=spendwise_user
 DB_PASSWORD=your-local-password
 ```
 
-Do not commit `.env` or put real credentials in `application.properties`.
-MySQL must be running. The
-`createDatabaseIfNotExist=true` JDBC option creates the database when needed,
-and Hibernate's `update` mode creates or updates tables for JPA entities
-without using a drop-and-recreate mode. Back up the database before applying
-schema changes to a database containing valuable data.
+Spring Boot imports this file as configuration. `.env` is excluded from Git;
+do not commit it or place real credentials in source files. `DB_URL` may be
+changed for a different local MySQL host or port.
 
-The current persistence model contains categories, transactions, and monthly
-category budgets. Transaction and budget amounts use `DECIMAL(19,2)`. A
-category cannot be deleted while referenced by a transaction or budget, and a
-category can have at most one budget per month. Database foreign keys enforce
-these references; finance records are not cascade-deleted. The project is a
-single-user MVP and does not currently persist users, accounts, or savings
-goals.
+The application listens on port `8082`. Hibernate uses the configured
+non-dropping `update` schema mode; it does not use `create` or `create-drop`.
+Back up an existing database before starting the application after schema
+changes. A missing database may be created by the JDBC URL option, so the
+MySQL account needs suitable database-creation rights if you rely on that
+behavior instead of creating the database first.
 
 ## Build and test
 
-From the project root:
+Run all tests and Maven verification from the project root:
 
 ```powershell
 mvn clean verify
 ```
 
-Automated JPA schema tests use an isolated in-memory H2 database; they do not
-connect to or modify the configured MySQL database.
+Tests requiring JPA use an isolated in-memory H2 database and do not connect
+to or modify MySQL.
 
-## Run
+## Run the application
 
-Set the MySQL environment variables above in the current PowerShell window, then
-run:
+With MySQL running and `.env` configured, start the server:
 
 ```powershell
 mvn spring-boot:run
 ```
 
-Open [http://localhost:8082](http://localhost:8082). The page should display
-“SpendWise” and “Your personal finance tracker starts here.” Stop the app with
-`Ctrl+C`.
+Open [http://localhost:8082](http://localhost:8082). Use the home page links
+to manage categories and transactions. Create at least one income and/or
+expense category before adding transactions; the selected category must match
+the transaction type. Stop the application with `Ctrl+C`.
+
+## Current scope
+
+SpendWise currently has no authentication or multi-user support. It does not
+include account management, savings goals, transaction imports, recurring
+transactions, budget/report pages, or external financial integrations.

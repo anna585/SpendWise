@@ -10,6 +10,7 @@ import com.example.spendwise.entity.TransactionType;
 import jakarta.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -49,6 +50,46 @@ class FinanceSchemaTest {
         Transaction reloaded = transactionRepository.findById(transaction.getId()).orElseThrow();
         assertThat(reloaded.getAmount()).isEqualByComparingTo("1250.75");
         assertThat(reloaded.getCategory().getId()).isEqualTo(category.getId());
+    }
+
+    @Test
+    void persistsUpdatesAndDeletesTransactionsAndOrdersNewestFirst() {
+        Category category = categoryRepository.saveAndFlush(
+                new Category("Dining", TransactionType.EXPENSE)
+        );
+        Transaction older = transactionRepository.saveAndFlush(
+                new Transaction(
+                        TransactionType.EXPENSE,
+                        new BigDecimal("12.50"),
+                        LocalDate.of(2026, 10, 14),
+                        "Older meal",
+                        category
+                )
+        );
+        Transaction newer = transactionRepository.saveAndFlush(
+                new Transaction(
+                        TransactionType.EXPENSE,
+                        new BigDecimal("20.00"),
+                        LocalDate.of(2026, 10, 16),
+                        "Newer meal",
+                        category
+                )
+        );
+
+        List<Transaction> ordered = transactionRepository.findAllByOrderByTransactionDateDescIdDesc();
+        assertThat(ordered).extracting(Transaction::getId)
+                .containsExactly(newer.getId(), older.getId());
+
+        newer.setAmount(new BigDecimal("21.75"));
+        newer.setDescription("Updated meal");
+        Transaction updated = transactionRepository.saveAndFlush(newer);
+        assertThat(updated.getAmount()).isEqualByComparingTo("21.75");
+        assertThat(updated.getDescription()).isEqualTo("Updated meal");
+
+        transactionRepository.delete(updated);
+        transactionRepository.flush();
+        assertThat(transactionRepository.findById(newer.getId())).isEmpty();
+        assertThat(transactionRepository.findById(older.getId())).isPresent();
     }
 
     @Test
