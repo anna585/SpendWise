@@ -32,17 +32,18 @@ GRANT CREATE ON *.* TO 'spendwise_user'@'localhost';
 GRANT ALL PRIVILEGES ON spendwise.* TO 'spendwise_user'@'localhost';
 ```
 
-Configure the connection in the PowerShell window where you will run the app.
-Set the password to the local MySQL account password you chose:
+Set `DB_USERNAME` and `DB_PASSWORD` in the project-root `.env` file. It is
+excluded from Git, and Spring Boot loads it when the app starts. Replace the
+example values with the credentials for your local MySQL account:
 
-```powershell
-$env:DB_URL = "jdbc:mysql://localhost:3306/spendwise?createDatabaseIfNotExist=true"
-$env:DB_USERNAME = "spendwise_user"
-$env:DB_PASSWORD = "<your-local-password>"
+```dotenv
+DB_URL=jdbc:mysql://localhost:3306/spendwise?createDatabaseIfNotExist=true
+DB_USERNAME=spendwise_user
+DB_PASSWORD=your-local-password
 ```
 
-The environment variables are read by `application.properties`. Do not replace
-them with real credentials in that file. MySQL must be running. The
+Do not commit `.env` or put real credentials in `application.properties`.
+MySQL must be running. The
 `createDatabaseIfNotExist=true` JDBC option creates the database when needed,
 and Hibernate's `update` mode creates or updates tables for JPA entities
 without using a drop-and-recreate mode. Back up the database before applying
