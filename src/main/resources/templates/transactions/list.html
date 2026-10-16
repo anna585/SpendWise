@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Transactions | SpendWise</title>
+</head>
+<body>
+<main>
+    <h1>Transactions</h1>
+    <p th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
+    <p th:if="${#lists.isEmpty(transactions)}">No transactions yet.</p>
+    <table th:unless="${#lists.isEmpty(transactions)}">
+        <thead>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Type</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="transaction : ${transactions}">
+            <td th:text="${transaction.transactionDate}"></td>
+            <td th:text="${transaction.type}"></td>
+            <td th:text="${transaction.description}"></td>
+            <td th:text="${transaction.category.name}"></td>
+            <td th:text="${transaction.amount}"></td>
+            <td>
+                <a th:href="@{/transactions/{id}/edit(id=${transaction.id})}">Edit</a>
+                <a th:href="@{/transactions/{id}/delete(id=${transaction.id})}">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p><a th:href="@{/transactions/new}">Add transaction</a></p>
+    <p><a th:href="@{/categories}">Manage categories</a></p>
+    <p><a th:href="@{/}">Home</a></p>
+</main>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Delete transaction | SpendWise</title>
+</head>
+<body>
+<main>
+    <h1>Delete transaction?</h1>
+    <p>Are you sure you want to delete this transaction?</p>
+    <dl>
+        <dt>Date</dt>
+        <dd th:text="${transaction.transactionDate}"></dd>
+        <dt>Type</dt>
+        <dd th:text="${transaction.type}"></dd>
+        <dt>Description</dt>
+        <dd th:text="${transaction.description}"></dd>
+        <dt>Category</dt>
+        <dd th:text="${transaction.category.name}"></dd>
+        <dt>Amount</dt>
+        <dd th:text="${transaction.amount}"></dd>
+    </dl>
+    <form th:action="@{/transactions/{id}/delete(id=${transaction.id})}" method="post">
+        <button type="submit">Confirm delete</button>
+    </form>
+    <p><a th:href="@{/transactions}">Cancel</a></p>
+</main>
+</body>
+</html>

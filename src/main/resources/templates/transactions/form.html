@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle} + ' | SpendWise'">Transaction | SpendWise</title>
+</head>
+<body>
+<main>
+    <h1 th:text="${pageTitle}">Transaction</h1>
+    <p th:if="${#fields.hasGlobalErrors()}"
+       th:each="error : ${#fields.globalErrors()}"
+       th:text="${error}"
+       role="alert"></p>
+    <form th:action="@{${formAction}}" th:object="${transactionForm}" method="post">
+        <div>
+            <label for="type">Type</label>
+            <select id="type" th:field="*{type}" required>
+                <option value="">Select a type</option>
+                <option th:each="type : ${transactionTypes}"
+                        th:value="${type}"
+                        th:text="${type}"></option>
+            </select>
+            <p th:if="${#fields.hasErrors('type')}" th:errors="*{type}" role="alert"></p>
+        </div>
+        <div>
+            <label for="amount">Amount</label>
+            <input id="amount" type="number" th:field="*{amount}"
+                   min="0.01" step="0.01" inputmode="decimal" required>
+            <p th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" role="alert"></p>
+        </div>
+        <div>
+            <label for="transactionDate">Date</label>
+            <input id="transactionDate" type="date" th:field="*{transactionDate}" required>
+            <p th:if="${#fields.hasErrors('transactionDate')}"
+               th:errors="*{transactionDate}" role="alert"></p>
+        </div>
+        <div>
+            <label for="description">Description</label>
+            <input id="description" type="text" th:field="*{description}"
+                   maxlength="255" required>
+            <p th:if="${#fields.hasErrors('description')}"
+               th:errors="*{description}" role="alert"></p>
+        </div>
+        <div>
+            <label for="categoryId">Category</label>
+            <select id="categoryId" th:field="*{categoryId}" required>
+                <option value="">Select a category</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name + ' (' + category.type + ')'}"></option>
+            </select>
+            <p th:if="${#fields.hasErrors('categoryId')}"
+               th:errors="*{categoryId}" role="alert"></p>
+            <p th:if="${#lists.isEmpty(categories)}">
+                No categories exist yet. <a th:href="@{/categories/new}">Create one</a>.
+            </p>
+        </div>
+        <button type="submit" th:text="${transactionId == null ? 'Save transaction' : 'Save changes'}">
+            Save transaction
+        </button>
+    </form>
+    <p><a th:href="@{/transactions}">Cancel</a></p>
+</main>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Transaction not found | SpendWise</title>
+</head>
+<body>
+<main>
+    <h1>Transaction not found</h1>
+    <p th:text="${errorMessage}" role="alert">The requested transaction does not exist.</p>
+    <p><a th:href="@{/transactions}">Back to transactions</a></p>
+</main>
+</body>
+</html>
