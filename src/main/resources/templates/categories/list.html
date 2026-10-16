@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Categories | SpendWise</title>
+</head>
+<body>
+<main>
+    <h1>Categories</h1>
+    <p th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
+    <p th:if="${#lists.isEmpty(categories)}">No categories yet.</p>
+    <table th:unless="${#lists.isEmpty(categories)}">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td th:text="${category.name}"></td>
+            <td th:text="${category.type}"></td>
+            <td th:text="${category.description}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <p><a th:href="@{/categories/new}">Create category</a></p>
+    <p><a th:href="@{/}">Home</a></p>
+</main>
+</body>
+</html>
