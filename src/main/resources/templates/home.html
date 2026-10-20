@@ -8,7 +8,15 @@
 <body>
     <main>
         <h1>SpendWise</h1>
-        <p>Your personal finance tracker starts here.</p>
+        <h2>This month's summary</h2>
+        <dl>
+            <dt>Total Income</dt>
+            <dd th:text="${#numbers.formatDecimal(monthlySummary.income, 1, 2)}">0.00</dd>
+            <dt>Total Expenses</dt>
+            <dd th:text="${#numbers.formatDecimal(monthlySummary.expenses, 1, 2)}">0.00</dd>
+            <dt>Balance</dt>
+            <dd th:text="${#numbers.formatDecimal(monthlySummary.balance, 1, 2)}">0.00</dd>
+        </dl>
         <nav aria-label="Main navigation">
             <ul>
                 <li><a th:href="@{/transactions}">Transactions</a></li>

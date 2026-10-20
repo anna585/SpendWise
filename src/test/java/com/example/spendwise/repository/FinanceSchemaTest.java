@@ -53,6 +53,45 @@ class FinanceSchemaTest {
     }
 
     @Test
+    void sumsTransactionsWithinInclusiveStartAndExclusiveEndDates() {
+        Category incomeCategory = categoryRepository.saveAndFlush(
+                new Category("Salary", TransactionType.INCOME)
+        );
+        Category expenseCategory = categoryRepository.saveAndFlush(
+                new Category("Dining", TransactionType.EXPENSE)
+        );
+        saveTransaction(incomeCategory, TransactionType.INCOME, "100.00", LocalDate.of(2026, 9, 30));
+        saveTransaction(incomeCategory, TransactionType.INCOME, "200.00", LocalDate.of(2026, 10, 1));
+        saveTransaction(incomeCategory, TransactionType.INCOME, "300.00", LocalDate.of(2026, 10, 31));
+        saveTransaction(incomeCategory, TransactionType.INCOME, "400.00", LocalDate.of(2026, 11, 1));
+        saveTransaction(expenseCategory, TransactionType.EXPENSE, "50.00", LocalDate.of(2026, 9, 30));
+        saveTransaction(expenseCategory, TransactionType.EXPENSE, "25.25", LocalDate.of(2026, 10, 1));
+        saveTransaction(expenseCategory, TransactionType.EXPENSE, "75.75", LocalDate.of(2026, 10, 31));
+        saveTransaction(expenseCategory, TransactionType.EXPENSE, "100.00", LocalDate.of(2026, 11, 1));
+
+        LocalDate startDate = LocalDate.of(2026, 10, 1);
+        LocalDate endDate = LocalDate.of(2026, 11, 1);
+
+        assertThat(transactionRepository.sumAmountByTypeAndDateRange(
+                TransactionType.INCOME, startDate, endDate
+        )).isEqualByComparingTo("500.00");
+        assertThat(transactionRepository.sumAmountByTypeAndDateRange(
+                TransactionType.EXPENSE, startDate, endDate
+        )).isEqualByComparingTo("101.00");
+    }
+
+    private void saveTransaction(
+            Category category,
+            TransactionType type,
+            String amount,
+            LocalDate date
+    ) {
+        transactionRepository.saveAndFlush(
+                new Transaction(type, new BigDecimal(amount), date, "Test transaction", category)
+        );
+    }
+
+    @Test
     void persistsUpdatesAndDeletesTransactionsAndOrdersNewestFirst() {
         Category category = categoryRepository.saveAndFlush(
                 new Category("Dining", TransactionType.EXPENSE)

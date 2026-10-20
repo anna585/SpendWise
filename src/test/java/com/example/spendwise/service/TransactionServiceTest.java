@@ -14,6 +14,7 @@ import com.example.spendwise.repository.CategoryRepository;
 import com.example.spendwise.repository.TransactionRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,49 @@ class TransactionServiceTest {
                 .thenReturn(transactions);
 
         assertThat(transactionService.findAll()).isSameAs(transactions);
+    }
+
+    @Test
+    void calculatesMonthlyIncomeExpensesAndBalanceUsingTheMonthDateRange() {
+        when(transactionRepository.sumAmountByTypeAndDateRange(
+                TransactionType.INCOME,
+                LocalDate.of(2026, 10, 1),
+                LocalDate.of(2026, 11, 1)
+        )).thenReturn(new BigDecimal("2500.75"));
+        when(transactionRepository.sumAmountByTypeAndDateRange(
+                TransactionType.EXPENSE,
+                LocalDate.of(2026, 10, 1),
+                LocalDate.of(2026, 11, 1)
+        )).thenReturn(new BigDecimal("825.50"));
+
+        MonthlySummary summary = transactionService.getMonthlySummary(YearMonth.of(2026, 10));
+
+        assertThat(summary.income()).isEqualByComparingTo("2500.75");
+        assertThat(summary.expenses()).isEqualByComparingTo("825.50");
+        assertThat(summary.balance()).isEqualByComparingTo("1675.25");
+        assertThat(summary.income().scale()).isEqualTo(2);
+        assertThat(summary.expenses().scale()).isEqualTo(2);
+        assertThat(summary.balance().scale()).isEqualTo(2);
+    }
+
+    @Test
+    void returnsZeroWithTwoDecimalPlacesForAnEmptyMonth() {
+        when(transactionRepository.sumAmountByTypeAndDateRange(
+                TransactionType.INCOME,
+                LocalDate.of(2026, 10, 1),
+                LocalDate.of(2026, 11, 1)
+        )).thenReturn(null);
+        when(transactionRepository.sumAmountByTypeAndDateRange(
+                TransactionType.EXPENSE,
+                LocalDate.of(2026, 10, 1),
+                LocalDate.of(2026, 11, 1)
+        )).thenReturn(null);
+
+        MonthlySummary summary = transactionService.getMonthlySummary(YearMonth.of(2026, 10));
+
+        assertThat(summary.income()).isEqualTo(new BigDecimal("0.00"));
+        assertThat(summary.expenses()).isEqualTo(new BigDecimal("0.00"));
+        assertThat(summary.balance()).isEqualTo(new BigDecimal("0.00"));
     }
 
     @Test
