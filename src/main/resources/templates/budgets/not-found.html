@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Budget not found | SpendWise</title>
+</head>
+<body>
+<main>
+    <h1>Budget not found</h1>
+    <p th:text="${errorMessage}">The requested budget could not be found.</p>
+    <p><a th:href="@{/budgets}">Back to budgets</a></p>
+</main>
+</body>
+</html>

@@ -32,4 +32,19 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("""
+            SELECT t.category.id AS categoryId,
+                   t.category.name AS categoryName,
+                   SUM(t.amount) AS amount
+            FROM Transaction t
+            WHERE t.type = com.example.spendwise.entity.TransactionType.EXPENSE
+              AND t.transactionDate >= :startDate
+              AND t.transactionDate < :endDate
+            GROUP BY t.category.id, t.category.name
+            """)
+    List<CategoryExpenseTotal> sumExpensesByCategoryAndDateRange(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

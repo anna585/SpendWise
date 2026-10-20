@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle} + ' | SpendWise'">Monthly budget | SpendWise</title>
+</head>
+<body>
+<main>
+    <h1 th:text="${pageTitle}">Monthly budget</h1>
+    <form th:action="@{${formAction}}" th:object="${budgetForm}" method="post">
+        <div>
+            <label for="month">Month</label>
+            <input id="month" type="month" th:field="*{month}" required>
+            <p th:if="${#fields.hasErrors('month')}" th:errors="*{month}" role="alert"></p>
+        </div>
+        <div>
+            <label for="categoryId">Expense category</label>
+            <select id="categoryId" th:field="*{categoryId}" required>
+                <option value="">Select a category</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"></option>
+            </select>
+            <p th:if="${#fields.hasErrors('categoryId')}"
+               th:errors="*{categoryId}" role="alert"></p>
+            <p th:if="${#lists.isEmpty(categories)}">
+                No expense categories exist. <a th:href="@{/categories/new}">Create one</a>.
+            </p>
+        </div>
+        <div>
+            <label for="amount">Budget amount</label>
+            <input id="amount" type="number" th:field="*{amount}"
+                   min="0.01" step="0.01" inputmode="decimal" required>
+            <p th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" role="alert"></p>
+        </div>
+        <button type="submit" th:text="${budgetId == null ? 'Save budget' : 'Save changes'}">
+            Save budget
+        </button>
+    </form>
+    <p><a th:href="@{/budgets(month=${budgetForm.month})}">Cancel</a></p>
+</main>
+</body>
+</html>

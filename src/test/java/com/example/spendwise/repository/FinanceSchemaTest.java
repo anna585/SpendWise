@@ -78,6 +78,13 @@ class FinanceSchemaTest {
         assertThat(transactionRepository.sumAmountByTypeAndDateRange(
                 TransactionType.EXPENSE, startDate, endDate
         )).isEqualByComparingTo("101.00");
+        assertThat(transactionRepository.sumExpensesByCategoryAndDateRange(startDate, endDate))
+                .singleElement()
+                .satisfies(total -> {
+                    assertThat(total.getCategoryId()).isEqualTo(expenseCategory.getId());
+                    assertThat(total.getCategoryName()).isEqualTo("Dining");
+                    assertThat(total.getAmount()).isEqualByComparingTo("101.00");
+                });
     }
 
     private void saveTransaction(

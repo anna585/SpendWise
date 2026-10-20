@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Budgets and spending | SpendWise</title>
+</head>
+<body>
+<main>
+    <h1>Budgets and spending</h1>
+    <p th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
+    <p th:if="${monthError}" th:text="${monthError}" role="alert"></p>
+    <form th:action="@{/budgets}" method="get">
+        <label for="month">Month</label>
+        <input id="month" type="month" name="month" th:value="${selectedMonth}" required>
+        <button type="submit">View report</button>
+    </form>
+    <p><a th:href="@{/budgets/new(month=${selectedMonth})}">Create monthly budget</a></p>
+    <p th:if="${#lists.isEmpty(reportRows)}">No expense categories yet. Create an expense category first.</p>
+    <table th:unless="${#lists.isEmpty(reportRows)}">
+        <thead>
+        <tr>
+            <th scope="col">Expense category</th>
+            <th scope="col">Budget</th>
+            <th scope="col">Spent</th>
+            <th scope="col">Remaining</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${reportRows}">
+            <td th:text="${row.categoryName}"></td>
+            <td th:if="${row.unbudgeted}">Unbudgeted</td>
+            <td th:unless="${row.unbudgeted}"
+                th:text="${#numbers.formatDecimal(row.budgetAmount, 1, 2)}"></td>
+            <td th:text="${#numbers.formatDecimal(row.amountSpent, 1, 2)}"></td>
+            <td th:if="${row.unbudgeted}">—</td>
+            <td th:unless="${row.unbudgeted}"
+                th:text="${#numbers.formatDecimal(row.remainingAmount, 1, 2)}"></td>
+            <td th:if="${row.unbudgeted}">No budget</td>
+            <td th:unless="${row.unbudgeted}"
+                th:text="${row.overBudget ? 'Over budget' : 'Within budget'}"></td>
+            <td>
+                <a th:if="${row.unbudgeted}"
+                   th:href="@{/budgets/new(month=${selectedMonth}, categoryId=${row.categoryId})}">
+                    Set budget
+                </a>
+                <div th:unless="${row.unbudgeted}">
+                    <a th:href="@{/budgets/{id}/edit(id=${row.budgetId})}">Edit</a>
+                    <form th:action="@{/budgets/{id}/delete(id=${row.budgetId})}" method="post">
+                        <input type="hidden" name="month" th:value="${selectedMonth}">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p><a th:href="@{/}">Home</a></p>
+</main>
+</body>
+</html>
