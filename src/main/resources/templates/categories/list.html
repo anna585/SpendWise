@@ -3,31 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Categories | SpendWise</title>
+    <title>Categories | SpendWiseAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>Categories</h1>
-    <p th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
-    <p th:if="${#lists.isEmpty(categories)}">No categories yet.</p>
-    <table th:unless="${#lists.isEmpty(categories)}">
-        <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
-            <th scope="col">Description</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="category : ${categories}">
-            <td th:text="${category.name}"></td>
-            <td th:text="${category.type}"></td>
-            <td th:text="${category.description}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <p><a th:href="@{/categories/new}">Create category</a></p>
-    <p><a th:href="@{/}">Home</a></p>
+<header th:replace="~{fragments/layout :: siteHeader('categories')}"></header>
+<main class="page-shell">
+    <div class="page-heading">
+        <p class="eyebrow">Organize your spending</p>
+        <h1>Categories</h1>
+        <p class="page-description">Group transactions into meaningful types.</p>
+    </div>
+    <p class="notice" th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
+    <div class="page-actions">
+        <a class="button" th:href="@{/categories/new}">Create category</a>
+    </div>
+    <section class="content-card">
+        <div class="empty-state" th:if="${#lists.isEmpty(categories)}">
+            <p>No categories yet. Create a category to organize your transactions.</p>
+        </div>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(categories)}">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category : ${categories}">
+                    <td th:text="${category.name}"></td>
+                    <td>
+                        <span class="type-badge"
+                              th:classappend="${category.type.name() == 'INCOME'} ? ' type-badge--income' : ' type-badge--expense'"
+                              th:text="${category.type}"></span>
+                    </td>
+                    <td th:text="${category.description}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 </body>
 </html>

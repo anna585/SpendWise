@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create category | SpendWise</title>
+    <title>Create category | SpendWiseAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>Create category</h1>
-    <form th:action="@{/categories}" th:object="${categoryForm}" method="post">
-        <div>
+<header th:replace="~{fragments/layout :: siteHeader('categories')}"></header>
+<main class="page-shell">
+    <div class="page-heading">
+        <p class="eyebrow">Build your own organization</p>
+        <h1>Create category</h1>
+        <p class="page-description">Choose a name and transaction type for your new category.</p>
+    </div>
+    <section class="content-card form-card">
+    <form class="form-grid" th:action="@{/categories}" th:object="${categoryForm}" method="post">
+        <div class="form-field">
             <label for="name">Name</label>
             <input id="name" type="text" th:field="*{name}" maxlength="80" required>
-            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" role="alert"></p>
+            <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" role="alert"></p>
         </div>
-        <div>
+        <div class="form-field">
             <label for="type">Type</label>
             <select id="type" th:field="*{type}" required>
                 <option value="">Select a type</option>
@@ -22,17 +29,20 @@
                         th:value="${type}"
                         th:text="${type}"></option>
             </select>
-            <p th:if="${#fields.hasErrors('type')}" th:errors="*{type}" role="alert"></p>
+            <p class="field-error" th:if="${#fields.hasErrors('type')}" th:errors="*{type}" role="alert"></p>
         </div>
-        <div>
+        <div class="form-field form-field--full">
             <label for="description">Description (optional)</label>
             <textarea id="description" th:field="*{description}" maxlength="255"></textarea>
             <p th:if="${#fields.hasErrors('description')}"
-               th:errors="*{description}" role="alert"></p>
+               th:errors="*{description}" class="field-error" role="alert"></p>
         </div>
-        <button type="submit">Save category</button>
+        <div class="form-actions form-field--full">
+            <button type="submit">Save category</button>
+            <a class="button button--secondary" th:href="@{/categories}">Back to categories</a>
+        </div>
     </form>
-    <p><a th:href="@{/categories}">Back to categories</a></p>
+    </section>
 </main>
 </body>
 </html>
