@@ -1,19 +1,51 @@
-# SpendWise
+# SpendWise AI
 
-SpendWise is a single-user, server-rendered personal finance tracker built
-with Spring Boot, Thymeleaf, Spring Data JPA, Bean Validation, and MySQL. The
-current web application lets you create and list income/expense categories
-and create, list, edit, and delete income/expense transactions.
+**A Personal Finance and Budget Management Application**
 
-Transactions have a positive decimal amount, date, description, type, and one
-category of the same type. Amounts are stored as `DECIMAL(19,2)`. Transaction
-deletion requires a confirmation page and a POST submission. Category
-management currently supports listing and creation only; categories referenced
-by transactions or budgets cannot be deleted by the database.
+SpendWise AI is a single-user, server-rendered personal finance application built with Java, Spring Boot, Thymeleaf, Spring Data JPA, Bean Validation, and MySQL.
 
-The persistence model also includes monthly category budgets, with one budget
-per category per month. Budget management, monthly summaries, and spending
-reports are not currently available in the web UI.
+The application helps users organize income and expenses, manage categories, monitor monthly financial summaries, and track spending against monthly budgets. The project is developed using an AI-assisted development workflow.
+
+## Features
+
+### Dashboard
+- Displays total income, total expenses, and balance for the current month.
+- Uses monthly transaction data to calculate financial summaries.
+
+### Transaction Management
+- Create, list, edit, and delete income and expense transactions.
+- Each transaction has a positive decimal amount, date, description, type, and category.
+- The selected category must match the transaction type.
+- Transaction deletion requires confirmation and a POST submission.
+
+### Category Management
+- Create and list income and expense categories.
+- Prevent duplicate category names according to the application's validation rules.
+- Categories referenced by transactions or budgets are protected by database relationships.
+
+### Monthly Budgets and Reports
+- Create, edit, and delete monthly budgets for expense categories.
+- Maintain one budget per category per month.
+- View budgeted amounts, actual spending, and remaining amounts for a selected month.
+- Identify categories that are over budget and expenses that are not covered by a budget.
+
+### User Interface
+- Shared layout and navigation.
+- Responsive styling for the dashboard, transactions, categories, and budgets.
+- Consistent typography, buttons, forms, tables, and validation messages.
+
+## Technology Stack
+
+- Java 25
+- Spring Boot 3.5.6
+- Apache Maven
+- Spring Data JPA and Hibernate
+- Bean Validation
+- Thymeleaf
+- MySQL
+- HTML and CSS
+- JUnit 5 and Mockito
+- H2 for isolated persistence tests
 
 ## Prerequisites
 
@@ -30,8 +62,7 @@ mvn -version
 
 ## Configure MySQL
 
-Create the `spendwise` database using an administrator account, then create a
-dedicated application user with access limited to that database:
+Create the `spendwise` database using a MySQL administrator account, then create a dedicated application user:
 
 ```sql
 CREATE DATABASE spendwise;
@@ -39,8 +70,7 @@ CREATE USER 'spendwise_user'@'localhost' IDENTIFIED BY '<choose-a-local-password
 GRANT ALL PRIVILEGES ON spendwise.* TO 'spendwise_user'@'localhost';
 ```
 
-Set the following values in the project-root `.env` file. Replace the example
-username and password with the local MySQL account credentials:
+Create a `.env` file in the project root with the following settings. Replace the example password with your local MySQL account password:
 
 ```dotenv
 DB_URL=jdbc:mysql://localhost:3306/spendwise?createDatabaseIfNotExist=true
@@ -48,43 +78,64 @@ DB_USERNAME=spendwise_user
 DB_PASSWORD=your-local-password
 ```
 
-Spring Boot imports this file as configuration. `.env` is excluded from Git;
-do not commit it or place real credentials in source files. `DB_URL` may be
-changed for a different local MySQL host or port.
+The application imports `.env` as configuration. The file is excluded from Git; never commit real credentials or place passwords in source files.
 
-The application listens on port `8082`. Hibernate uses the configured
-non-dropping `update` schema mode; it does not use `create` or `create-drop`.
-Back up an existing database before starting the application after schema
-changes. A missing database may be created by the JDBC URL option, so the
-MySQL account needs suitable database-creation rights if you rely on that
-behavior instead of creating the database first.
+The application listens on port `8082`.
 
-## Build and test
+Hibernate uses the configured non-dropping `update` schema mode. Back up an existing database before starting the application after schema changes. If the database is not created manually, the JDBC URL option may create it automatically; in that case, the MySQL account needs the appropriate database-creation permissions.
 
-Run all tests and Maven verification from the project root:
+## Build and Test
+
+Run the full Maven verification lifecycle from the project root:
 
 ```powershell
 mvn clean verify
 ```
 
-Tests requiring JPA use an isolated in-memory H2 database and do not connect
-to or modify MySQL.
+JPA tests use an isolated in-memory H2 database and do not connect to or modify the MySQL database.
 
-## Run the application
+## Run the Application
 
-With MySQL running and `.env` configured, start the server:
+Make sure MySQL is running and the project-root `.env` file is configured.
+
+Start the application:
 
 ```powershell
 mvn spring-boot:run
 ```
 
-Open [http://localhost:8082](http://localhost:8082). Use the home page links
-to manage categories and transactions. Create at least one income and/or
-expense category before adding transactions; the selected category must match
-the transaction type. Stop the application with `Ctrl+C`.
+Open the application in your browser:
 
-## Current scope
+[http://localhost:8082](http://localhost:8082)
 
-SpendWise currently has no authentication or multi-user support. It does not
-include account management, savings goals, transaction imports, recurring
-transactions, budget/report pages, or external financial integrations.
+Use the navigation to access the dashboard, transactions, categories, and monthly budgets. Create the required expense categories before assigning budgets, and create categories matching the transaction type before adding transactions.
+
+Stop the application with `Ctrl+C` in the terminal running the server.
+
+## Project Architecture
+
+The application follows a layered Spring Boot architecture:
+
+- **Controllers** — handle HTTP requests and page navigation.
+- **Services** — implement business logic and calculations.
+- **Repositories** — access persisted data through Spring Data JPA.
+- **Entities and models** — represent transactions, categories, budgets, and reporting data.
+- **Thymeleaf templates** — render server-side HTML pages.
+- **CSS** — provides shared styling and responsive layouts.
+- **Tests** — verify application behavior and business rules.
+
+## AI-Assisted Development
+
+AI development tools support implementation, code review, testing, and iterative UI improvements. AI-generated changes are reviewed and verified as part of the development workflow.
+
+Potential future enhancements include AI-powered spending insights, personalized budgeting suggestions, and automated expense analysis. These are future possibilities, not current features.
+
+## Current Scope and Limitations
+
+- The application is designed for a single user and does not currently provide authentication or multi-user support.
+- It does not currently include account management, savings goals, transaction imports, recurring transactions, or external financial integrations.
+- AI-powered financial analysis and recommendations are not currently implemented.
+
+## License
+
+No license has been specified yet.
