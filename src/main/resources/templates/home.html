@@ -3,27 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SpendWise</title>
+    <meta name="theme-color" content="#173b72">
+    <title>Dashboard | SpendWiseAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-    <main>
-        <h1>SpendWise</h1>
-        <h2>This month's summary</h2>
-        <dl>
-            <dt>Total Income</dt>
-            <dd th:text="${#numbers.formatDecimal(monthlySummary.income, 1, 2)}">0.00</dd>
-            <dt>Total Expenses</dt>
-            <dd th:text="${#numbers.formatDecimal(monthlySummary.expenses, 1, 2)}">0.00</dd>
-            <dt>Balance</dt>
-            <dd th:text="${#numbers.formatDecimal(monthlySummary.balance, 1, 2)}">0.00</dd>
-        </dl>
-        <nav aria-label="Main navigation">
-            <ul>
-                <li><a th:href="@{/transactions}">Transactions</a></li>
-                <li><a th:href="@{/categories}">Categories</a></li>
-                <li><a th:href="@{/budgets}">Budgets and reports</a></li>
-            </ul>
-        </nav>
+    <header th:replace="~{fragments/layout :: siteHeader('dashboard')}"></header>
+    <main class="page-shell">
+        <div class="page-heading">
+            <p class="eyebrow">Your finances at a glance</p>
+            <h1>Dashboard</h1>
+            <p class="page-description">A clear view of your money this month.</p>
+        </div>
+        <section class="summary-grid" aria-label="This month's financial summary">
+            <article class="summary-card summary-card--income">
+                <div class="summary-card__top">
+                    <dl>
+                        <dt>Total Income</dt>
+                        <dd th:text="${#numbers.formatDecimal(monthlySummary.income, 1, 2)}">0.00</dd>
+                    </dl>
+                    <span class="summary-card__icon" aria-hidden="true">+</span>
+                </div>
+                <p class="summary-card__period">Money coming in this month</p>
+            </article>
+            <article class="summary-card summary-card--expense">
+                <div class="summary-card__top">
+                    <dl>
+                        <dt>Total Expenses</dt>
+                        <dd th:text="${#numbers.formatDecimal(monthlySummary.expenses, 1, 2)}">0.00</dd>
+                    </dl>
+                    <span class="summary-card__icon" aria-hidden="true">−</span>
+                </div>
+                <p class="summary-card__period">Money going out this month</p>
+            </article>
+            <article class="summary-card summary-card--balance">
+                <div class="summary-card__top">
+                    <dl>
+                        <dt>Balance</dt>
+                        <dd th:text="${#numbers.formatDecimal(monthlySummary.balance, 1, 2)}">0.00</dd>
+                    </dl>
+                    <span class="summary-card__icon" aria-hidden="true">=</span>
+                </div>
+                <p class="summary-card__period">Your net balance this month</p>
+            </article>
+        </section>
     </main>
 </body>
 </html>

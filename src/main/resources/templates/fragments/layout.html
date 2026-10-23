@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="site-header" th:fragment="siteHeader(activePage)">
+    <div class="site-header__inner">
+        <a class="brand" th:href="@{/}" aria-label="SpendWiseAI home">
+            <span class="brand__mark" aria-hidden="true">S</span>
+            <span class="brand__name">SpendWise<span>AI</span></span>
+        </a>
+        <nav class="primary-nav" aria-label="Main navigation">
+            <a th:href="@{/}"
+               th:classappend="${activePage == 'dashboard'} ? ' is-active' : ''"
+               th:attr="aria-current=${activePage == 'dashboard' ? 'page' : null}">Dashboard</a>
+            <a th:href="@{/transactions}"
+               th:classappend="${activePage == 'transactions'} ? ' is-active' : ''"
+               th:attr="aria-current=${activePage == 'transactions' ? 'page' : null}">Transactions</a>
+            <a th:href="@{/categories}"
+               th:classappend="${activePage == 'categories'} ? ' is-active' : ''"
+               th:attr="aria-current=${activePage == 'categories' ? 'page' : null}">Categories</a>
+            <a th:href="@{/budgets}"
+               th:classappend="${activePage == 'budgets'} ? ' is-active' : ''"
+               th:attr="aria-current=${activePage == 'budgets' ? 'page' : null}">Budgets &amp; reports</a>
+        </nav>
+    </div>
+</header>
+</body>
+</html>

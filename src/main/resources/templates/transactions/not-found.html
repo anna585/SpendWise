@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Transaction not found | SpendWise</title>
+    <title>Transaction not found | SpendWiseAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>Transaction not found</h1>
-    <p th:text="${errorMessage}" role="alert">The requested transaction does not exist.</p>
-    <p><a th:href="@{/transactions}">Back to transactions</a></p>
+<header th:replace="~{fragments/layout :: siteHeader('transactions')}"></header>
+<main class="page-shell">
+    <div class="page-heading">
+        <p class="eyebrow">We couldn't find that record</p>
+        <h1>Transaction not found</h1>
+    </div>
+    <section class="content-card">
+        <p class="notice notice--error" th:text="${errorMessage}" role="alert">
+            The requested transaction does not exist.
+        </p>
+        <a class="button button--secondary" th:href="@{/transactions}">Back to transactions</a>
+    </section>
 </main>
 </body>
 </html>

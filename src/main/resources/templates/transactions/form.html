@@ -3,17 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${pageTitle} + ' | SpendWise'">Transaction | SpendWise</title>
+    <title th:text="${pageTitle} + ' | SpendWiseAI'">Transaction | SpendWiseAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1 th:text="${pageTitle}">Transaction</h1>
+<header th:replace="~{fragments/layout :: siteHeader('transactions')}"></header>
+<main class="page-shell">
+    <div class="page-heading">
+        <p class="eyebrow">Keep your records up to date</p>
+        <h1 th:text="${pageTitle}">Transaction</h1>
+        <p class="page-description">Enter the details below to save your transaction.</p>
+    </div>
+    <section class="content-card form-card">
     <p th:if="${#fields.hasGlobalErrors()}"
        th:each="error : ${#fields.globalErrors()}"
        th:text="${error}"
+       class="notice notice--error"
        role="alert"></p>
-    <form th:action="@{${formAction}}" th:object="${transactionForm}" method="post">
-        <div>
+    <form class="form-grid" th:action="@{${formAction}}" th:object="${transactionForm}" method="post">
+        <div class="form-field">
             <label for="type">Type</label>
             <select id="type" th:field="*{type}" required>
                 <option value="">Select a type</option>
@@ -21,28 +29,28 @@
                         th:value="${type}"
                         th:text="${type}"></option>
             </select>
-            <p th:if="${#fields.hasErrors('type')}" th:errors="*{type}" role="alert"></p>
+            <p class="field-error" th:if="${#fields.hasErrors('type')}" th:errors="*{type}" role="alert"></p>
         </div>
-        <div>
+        <div class="form-field">
             <label for="amount">Amount</label>
             <input id="amount" type="number" th:field="*{amount}"
                    min="0.01" step="0.01" inputmode="decimal" required>
-            <p th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" role="alert"></p>
+            <p class="field-error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" role="alert"></p>
         </div>
-        <div>
+        <div class="form-field">
             <label for="transactionDate">Date</label>
             <input id="transactionDate" type="date" th:field="*{transactionDate}" required>
             <p th:if="${#fields.hasErrors('transactionDate')}"
-               th:errors="*{transactionDate}" role="alert"></p>
+               th:errors="*{transactionDate}" class="field-error" role="alert"></p>
         </div>
-        <div>
+        <div class="form-field">
             <label for="description">Description</label>
             <input id="description" type="text" th:field="*{description}"
                    maxlength="255" required>
             <p th:if="${#fields.hasErrors('description')}"
-               th:errors="*{description}" role="alert"></p>
+               th:errors="*{description}" class="field-error" role="alert"></p>
         </div>
-        <div>
+        <div class="form-field form-field--full">
             <label for="categoryId">Category</label>
             <select id="categoryId" th:field="*{categoryId}" required>
                 <option value="">Select a category</option>
@@ -51,16 +59,19 @@
                         th:text="${category.name + ' (' + category.type + ')'}"></option>
             </select>
             <p th:if="${#fields.hasErrors('categoryId')}"
-               th:errors="*{categoryId}" role="alert"></p>
-            <p th:if="${#lists.isEmpty(categories)}">
+               th:errors="*{categoryId}" class="field-error" role="alert"></p>
+            <p class="form-help" th:if="${#lists.isEmpty(categories)}">
                 No categories exist yet. <a th:href="@{/categories/new}">Create one</a>.
             </p>
         </div>
-        <button type="submit" th:text="${transactionId == null ? 'Save transaction' : 'Save changes'}">
-            Save transaction
-        </button>
+        <div class="form-actions form-field--full">
+            <button type="submit" th:text="${transactionId == null ? 'Save transaction' : 'Save changes'}">
+                Save transaction
+            </button>
+            <a class="button button--secondary" th:href="@{/transactions}">Cancel</a>
+        </div>
     </form>
-    <p><a th:href="@{/transactions}">Cancel</a></p>
+    </section>
 </main>
 </body>
 </html>

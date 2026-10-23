@@ -3,41 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Transactions | SpendWise</title>
+    <title>Transactions | SpendWiseAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>Transactions</h1>
-    <p th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
-    <p th:if="${#lists.isEmpty(transactions)}">No transactions yet.</p>
-    <table th:unless="${#lists.isEmpty(transactions)}">
-        <thead>
-        <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Type</th>
-            <th scope="col">Description</th>
-            <th scope="col">Category</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="transaction : ${transactions}">
-            <td th:text="${transaction.transactionDate}"></td>
-            <td th:text="${transaction.type}"></td>
-            <td th:text="${transaction.description}"></td>
-            <td th:text="${transaction.category.name}"></td>
-            <td th:text="${transaction.amount}"></td>
-            <td>
-                <a th:href="@{/transactions/{id}/edit(id=${transaction.id})}">Edit</a>
-                <a th:href="@{/transactions/{id}/delete(id=${transaction.id})}">Delete</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <p><a th:href="@{/transactions/new}">Add transaction</a></p>
-    <p><a th:href="@{/categories}">Manage categories</a></p>
-    <p><a th:href="@{/}">Home</a></p>
+<header th:replace="~{fragments/layout :: siteHeader('transactions')}"></header>
+<main class="page-shell">
+    <div class="page-heading">
+        <p class="eyebrow">Your money, organized</p>
+        <h1>Transactions</h1>
+        <p class="page-description">Review and manage your income and expenses.</p>
+    </div>
+    <p class="notice" th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
+    <div class="page-actions">
+        <a class="button" th:href="@{/transactions/new}">Add transaction</a>
+    </div>
+    <section class="content-card">
+        <div class="empty-state" th:if="${#lists.isEmpty(transactions)}">
+            <p>No transactions yet. Add a transaction to start tracking your money.</p>
+        </div>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(transactions)}">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Category</th>
+                    <th scope="col" class="amount">Amount</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="transaction : ${transactions}">
+                    <td th:text="${transaction.transactionDate}"></td>
+                    <td>
+                        <span class="type-badge"
+                              th:classappend="${transaction.type.name() == 'INCOME'} ? ' type-badge--income' : ' type-badge--expense'"
+                              th:text="${transaction.type}"></span>
+                    </td>
+                    <td th:text="${transaction.description}"></td>
+                    <td th:text="${transaction.category.name}"></td>
+                    <td class="amount"
+                        th:text="${#numbers.formatDecimal(transaction.amount, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td>
+                        <div class="table-actions">
+                            <a th:href="@{/transactions/{id}/edit(id=${transaction.id})}">Edit</a>
+                            <a class="action-delete"
+                               th:href="@{/transactions/{id}/delete(id=${transaction.id})}">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 </body>
 </html>
