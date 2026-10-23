@@ -20,7 +20,7 @@
                 <div class="summary-card__top">
                     <dl>
                         <dt>Total Income</dt>
-                        <dd th:text="${#numbers.formatDecimal(monthlySummary.income, 1, 2)}">0.00</dd>
+                        <dd th:text="${#numbers.formatDecimal(monthlySummary.income, 1, 'COMMA', 2, 'POINT')}">0.00</dd>
                     </dl>
                     <span class="summary-card__icon" aria-hidden="true">+</span>
                 </div>
@@ -30,7 +30,7 @@
                 <div class="summary-card__top">
                     <dl>
                         <dt>Total Expenses</dt>
-                        <dd th:text="${#numbers.formatDecimal(monthlySummary.expenses, 1, 2)}">0.00</dd>
+                        <dd th:text="${#numbers.formatDecimal(monthlySummary.expenses, 1, 'COMMA', 2, 'POINT')}">0.00</dd>
                     </dl>
                     <span class="summary-card__icon" aria-hidden="true">−</span>
                 </div>
@@ -40,7 +40,7 @@
                 <div class="summary-card__top">
                     <dl>
                         <dt>Balance</dt>
-                        <dd th:text="${#numbers.formatDecimal(monthlySummary.balance, 1, 2)}">0.00</dd>
+                        <dd th:text="${#numbers.formatDecimal(monthlySummary.balance, 1, 'COMMA', 2, 'POINT')}">0.00</dd>
                     </dl>
                     <span class="summary-card__icon" aria-hidden="true">=</span>
                 </div>

@@ -43,7 +43,7 @@ class HomeControllerTest {
                 .andReturn();
 
         assertThat(result.getResponse().getContentAsString())
-                .contains("1250.00", "475.25", "774.75");
+                .contains("1,250.00", "475.25", "774.75");
         verify(transactionService).getMonthlySummary(YearMonth.now());
     }
 }
