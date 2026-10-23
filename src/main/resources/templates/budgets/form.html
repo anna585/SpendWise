@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${pageTitle} + ' | SpendWise'">Monthly budget | SpendWise</title>
+    <title th:text="${pageTitle} + ' | SpendWiseAI'">Monthly budget | SpendWiseAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1 th:text="${pageTitle}">Monthly budget</h1>
-    <form th:action="@{${formAction}}" th:object="${budgetForm}" method="post">
-        <div>
+<header th:replace="~{fragments/layout :: siteHeader('budgets')}"></header>
+<main class="page-shell">
+    <div class="page-heading">
+        <p class="eyebrow">Set a clear monthly target</p>
+        <h1 th:text="${pageTitle}">Monthly budget</h1>
+        <p class="page-description">Choose an expense category and monthly spending limit.</p>
+    </div>
+    <section class="content-card form-card">
+    <form class="form-grid" th:action="@{${formAction}}" th:object="${budgetForm}" method="post">
+        <div class="form-field">
             <label for="month">Month</label>
             <input id="month" type="month" th:field="*{month}" required>
-            <p th:if="${#fields.hasErrors('month')}" th:errors="*{month}" role="alert"></p>
+            <p class="field-error" th:if="${#fields.hasErrors('month')}" th:errors="*{month}" role="alert"></p>
         </div>
-        <div>
+        <div class="form-field">
             <label for="categoryId">Expense category</label>
             <select id="categoryId" th:field="*{categoryId}" required>
                 <option value="">Select a category</option>
@@ -23,22 +30,25 @@
                         th:text="${category.name}"></option>
             </select>
             <p th:if="${#fields.hasErrors('categoryId')}"
-               th:errors="*{categoryId}" role="alert"></p>
-            <p th:if="${#lists.isEmpty(categories)}">
+               th:errors="*{categoryId}" class="field-error" role="alert"></p>
+            <p class="form-help" th:if="${#lists.isEmpty(categories)}">
                 No expense categories exist. <a th:href="@{/categories/new}">Create one</a>.
             </p>
         </div>
-        <div>
+        <div class="form-field">
             <label for="amount">Budget amount</label>
             <input id="amount" type="number" th:field="*{amount}"
                    min="0.01" step="0.01" inputmode="decimal" required>
-            <p th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" role="alert"></p>
+            <p class="field-error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" role="alert"></p>
         </div>
-        <button type="submit" th:text="${budgetId == null ? 'Save budget' : 'Save changes'}">
-            Save budget
-        </button>
+        <div class="form-actions form-field--full">
+            <button type="submit" th:text="${budgetId == null ? 'Save budget' : 'Save changes'}">
+                Save budget
+            </button>
+            <a class="button button--secondary" th:href="@{/budgets(month=${budgetForm.month})}">Cancel</a>
+        </div>
     </form>
-    <p><a th:href="@{/budgets(month=${budgetForm.month})}">Cancel</a></p>
+    </section>
 </main>
 </body>
 </html>

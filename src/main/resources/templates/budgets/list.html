@@ -3,61 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Budgets and spending | SpendWise</title>
+    <title>Budgets and spending | SpendWiseAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>Budgets and spending</h1>
-    <p th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
-    <p th:if="${monthError}" th:text="${monthError}" role="alert"></p>
-    <form th:action="@{/budgets}" method="get">
-        <label for="month">Month</label>
-        <input id="month" type="month" name="month" th:value="${selectedMonth}" required>
-        <button type="submit">View report</button>
-    </form>
-    <p><a th:href="@{/budgets/new(month=${selectedMonth})}">Create monthly budget</a></p>
-    <p th:if="${#lists.isEmpty(reportRows)}">No expense categories yet. Create an expense category first.</p>
-    <table th:unless="${#lists.isEmpty(reportRows)}">
-        <thead>
-        <tr>
-            <th scope="col">Expense category</th>
-            <th scope="col">Budget</th>
-            <th scope="col">Spent</th>
-            <th scope="col">Remaining</th>
-            <th scope="col">Status</th>
-            <th scope="col">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="row : ${reportRows}">
-            <td th:text="${row.categoryName}"></td>
-            <td th:if="${row.unbudgeted}">Unbudgeted</td>
-            <td th:unless="${row.unbudgeted}"
-                th:text="${#numbers.formatDecimal(row.budgetAmount, 1, 2)}"></td>
-            <td th:text="${#numbers.formatDecimal(row.amountSpent, 1, 2)}"></td>
-            <td th:if="${row.unbudgeted}">—</td>
-            <td th:unless="${row.unbudgeted}"
-                th:text="${#numbers.formatDecimal(row.remainingAmount, 1, 2)}"></td>
-            <td th:if="${row.unbudgeted}">No budget</td>
-            <td th:unless="${row.unbudgeted}"
-                th:text="${row.overBudget ? 'Over budget' : 'Within budget'}"></td>
-            <td>
-                <a th:if="${row.unbudgeted}"
-                   th:href="@{/budgets/new(month=${selectedMonth}, categoryId=${row.categoryId})}">
-                    Set budget
-                </a>
-                <div th:unless="${row.unbudgeted}">
-                    <a th:href="@{/budgets/{id}/edit(id=${row.budgetId})}">Edit</a>
-                    <form th:action="@{/budgets/{id}/delete(id=${row.budgetId})}" method="post">
-                        <input type="hidden" name="month" th:value="${selectedMonth}">
-                        <button type="submit">Delete</button>
-                    </form>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <p><a th:href="@{/}">Home</a></p>
+<header th:replace="~{fragments/layout :: siteHeader('budgets')}"></header>
+<main class="page-shell">
+    <div class="page-heading">
+        <p class="eyebrow">Plan ahead, spend with confidence</p>
+        <h1>Budgets &amp; Reports</h1>
+        <p class="page-description">Compare your monthly spending with your category budgets.</p>
+    </div>
+    <p class="notice" th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
+    <p class="notice notice--error" th:if="${monthError}" th:text="${monthError}" role="alert"></p>
+    <div class="report-toolbar">
+        <form class="report-filters" th:action="@{/budgets}" method="get">
+            <div>
+                <label for="month">Report month</label>
+                <input id="month" type="month" name="month" th:value="${selectedMonth}" required>
+            </div>
+            <button type="submit">View report</button>
+        </form>
+        <a class="button" th:href="@{/budgets/new(month=${selectedMonth})}">Create monthly budget</a>
+    </div>
+    <section class="content-card">
+        <div class="empty-state" th:if="${#lists.isEmpty(reportRows)}">
+            <p>No expense categories yet. Create an expense category first.</p>
+        </div>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(reportRows)}">
+            <table class="data-table report-table">
+                <thead>
+                <tr>
+                    <th scope="col">Expense category</th>
+                    <th scope="col" class="amount">Budget</th>
+                    <th scope="col" class="amount">Spent</th>
+                    <th scope="col" class="amount">Remaining</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${reportRows}"
+                    th:classappend="${row.overBudget} ? ' is-over-budget' : ''">
+                    <td th:text="${row.categoryName}"></td>
+                    <td class="amount" th:if="${row.unbudgeted}">Unbudgeted</td>
+                    <td class="amount" th:unless="${row.unbudgeted}"
+                        th:text="${#numbers.formatDecimal(row.budgetAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td class="amount"
+                        th:classappend="${row.overBudget} ? ' amount-over' : ''"
+                        th:text="${#numbers.formatDecimal(row.amountSpent, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td class="amount amount-remaining" th:if="${row.unbudgeted}">—</td>
+                    <td class="amount"
+                        th:classappend="${row.remainingAmount != null and row.remainingAmount < 0} ? ' amount-over' : ' amount-remaining'"
+                        th:unless="${row.unbudgeted}"
+                        th:text="${#numbers.formatDecimal(row.remainingAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td th:if="${row.unbudgeted}">
+                        <span class="status-badge status-badge--unbudgeted">No budget</span>
+                    </td>
+                    <td th:unless="${row.unbudgeted}">
+                        <span class="status-badge"
+                              th:classappend="${row.overBudget} ? ' status-badge--over' : ''"
+                              th:text="${row.overBudget ? 'Over budget' : 'Within budget'}"></span>
+                    </td>
+                    <td>
+                        <div class="table-actions" th:if="${row.unbudgeted}">
+                            <a th:href="@{/budgets/new(month=${selectedMonth}, categoryId=${row.categoryId})}">
+                                Set budget
+                            </a>
+                        </div>
+                        <div class="table-actions" th:unless="${row.unbudgeted}">
+                            <a th:href="@{/budgets/{id}/edit(id=${row.budgetId})}">Edit</a>
+                            <form th:action="@{/budgets/{id}/delete(id=${row.budgetId})}" method="post">
+                                <input type="hidden" name="month" th:value="${selectedMonth}">
+                                <button class="button--danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 </body>
 </html>

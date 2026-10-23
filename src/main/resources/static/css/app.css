@@ -454,6 +454,100 @@ button.button--danger:hover {
     color: #a23a3a;
 }
 
+.report-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.report-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+}
+
+.report-filters label {
+    display: block;
+    margin-bottom: 4px;
+    color: #344258;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.report-filters input {
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--color-ink);
+    font: inherit;
+}
+
+.report-filters input:focus-visible {
+    border-color: #5287dc;
+    outline: 3px solid rgb(121 168 255 / 35%);
+    outline-offset: 1px;
+}
+
+.report-table tbody tr.is-over-budget {
+    background: #fff8f6;
+}
+
+.report-table tbody tr.is-over-budget:hover {
+    background: #fff1ee;
+}
+
+.report-table .amount-over {
+    color: #a23a3a;
+}
+
+.report-table .amount-remaining {
+    color: var(--color-income);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--color-income-soft);
+    color: #155a41;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-badge--over {
+    background: var(--color-expense-soft);
+    color: #8f302c;
+}
+
+.status-badge--unbudgeted {
+    background: var(--color-warning-soft);
+    color: #74430d;
+}
+
+.table-actions form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.table-actions button {
+    min-height: 34px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
 .form-card {
     max-width: 720px;
 }
